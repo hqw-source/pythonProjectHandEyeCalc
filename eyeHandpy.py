@@ -157,25 +157,26 @@ def eyeHandCalc(chessboard_size,square_size,eyeHandmethod):
         print(f"{i}:", chess2base_T[i])
         chess2base_T_List.append(chess2base_T[i].tolist())
     print('chess2base_T_List',chess2base_T_List)
-    return '\n'.join([' '.join(f'{x:.6f}' for x in row)for row in RT]),'\n'.join([' '.join(f'{x:.6f}' for x in row)for row in chess2base_T_List])
 
-# print(np.array(chess2base_T[1:3]))
-# # 提取 y, x, z 数据
-# y_data = [point[0] for point in chess2base_T]
-# x_data = [point[1] for point in chess2base_T]
-# z_data = [point[2] for point in chess2base_T]
-#
-# # 创建一个新的3D绘图对象
-# fig = plt.figure()
-# ax = fig.add_subplot(111, projection='3d')
-#
-# # 绘制3D散点图
-# ax.scatter(x_data, y_data, z_data, c='r', marker='o')
-#
-# # 设置坐标轴标签
-# ax.set_xlabel('X Label')
-# ax.set_ylabel('Y Label')
-# ax.set_zlabel('Z Label')
-#
-# # 显示图形
-# plt.show()
+
+    print(np.array(chess2base_T[1:3]))
+    #
+    # # 提取 y, x, z 数据
+    # y_data = [point[0] for point in chess2base_T]
+    # x_data = [point[1] for point in chess2base_T]
+    # z_data = [point[2] for point in chess2base_T]
+    #
+    # # 创建一个新的3D绘图对象
+    # fig = plt.figure()
+    # ax = fig.add_subplot(111, projection='3d')
+    #
+    # # 绘制3D散点图
+    # ax.scatter(x_data, y_data, z_data, c='r', marker='o')
+    #
+    # # 设置坐标轴标签
+    # ax.set_xlabel('X Label')
+    # ax.set_ylabel('Y Label')
+    # ax.set_zlabel('Z Label')
+
+    return '\n'.join([' '.join(f'{x:.6f}' for x in row) for row in RT]), '\n'.join(
+        [' '.join(f'{x:.6f}' for x in row) for row in chess2base_T_List])

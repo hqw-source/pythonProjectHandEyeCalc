@@ -23,7 +23,7 @@
       <x>20</x>
       <y>79</y>
       <width>1291</width>
-      <height>521</height>
+      <height>431</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -854,9 +854,9 @@
     <property name="geometry">
      <rect>
       <x>670</x>
-      <y>870</y>
+      <y>780</y>
       <width>642</width>
-      <height>121</height>
+      <height>211</height>
      </rect>
     </property>
     <property name="font">
@@ -872,7 +872,7 @@
      <enum>QFrame::Raised</enum>
     </property>
     <property name="text">
-     <string>验算精度</string>
+     <string/>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -882,7 +882,7 @@
     <property name="geometry">
      <rect>
       <x>670</x>
-      <y>610</y>
+      <y>520</y>
       <width>641</width>
       <height>251</height>
      </rect>
@@ -897,9 +897,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>10</y>
-       <width>621</width>
-       <height>241</height>
+       <y>6</y>
+       <width>622</width>
+       <height>240</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
@@ -1161,9 +1161,9 @@
     <property name="geometry">
      <rect>
       <x>19</x>
-      <y>610</y>
+      <y>520</y>
       <width>642</width>
-      <height>381</height>
+      <height>471</height>
      </rect>
     </property>
     <property name="minimumSize">
@@ -1190,7 +1190,7 @@
        <x>10</x>
        <y>90</y>
        <width>626</width>
-       <height>280</height>
+       <height>371</height>
       </rect>
      </property>
      <property name="minimumSize">
@@ -1202,7 +1202,7 @@
      <property name="maximumSize">
       <size>
        <width>626</width>
-       <height>280</height>
+       <height>380</height>
       </size>
      </property>
      <property name="font">
@@ -1283,6 +1283,98 @@
      </layout>
     </widget>
    </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>680</x>
+      <y>788</y>
+      <width>393</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_21">
+     <item>
+      <widget class="QLabel" name="label_25">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>1</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>50</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap>Img/squareSizeImg.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
+       </property>
+       <property name="wordWrap">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_16">
+       <property name="minimumSize">
+        <size>
+         <width>334</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>40</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>黑体</family>
+         <pointsize>20</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>精度评估</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QTextEdit" name="accuracyEdit">
+    <property name="geometry">
+     <rect>
+      <x>680</x>
+      <y>850</y>
+      <width>621</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>621</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>495</width>
+      <height>139</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -1290,7 +1382,7 @@
      <x>0</x>
      <y>0</y>
      <width>2031</width>
-     <height>18</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
