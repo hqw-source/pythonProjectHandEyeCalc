@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from math import *
+from pathlib import Path
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.spatial.transform import Rotation as R
@@ -15,23 +16,22 @@ def myRPY2R_robot(x, y, z):
     return R
 def rotationMatrixToEulerAngles(R):
     """
-    将旋转矩阵转换为欧拉角 (rx, ry, rz)，以 ZYX 顺序为标准。
+    将旋转矩阵转换为欧拉角 (rx, ry, rz)，使用 ZYX 旋转顺序
     """
     sy = np.sqrt(R[0, 0] ** 2 + R[1, 0] ** 2)
 
-    singular = sy < 1e-6  # 检查是否接近奇异情况
+    singular = sy < 1e-6
 
     if not singular:
         rx = np.arctan2(R[2, 1], R[2, 2])
         ry = np.arctan2(-R[2, 0], sy)
         rz = np.arctan2(R[1, 0], R[0, 0])
     else:
-        # 处理奇异情况
         rx = np.arctan2(-R[1, 2], R[1, 1])
         ry = np.arctan2(-R[2, 0], sy)
         rz = 0
 
-    return np.array([rx, ry, rz])
+    return np.degrees([rx, ry, rz])
 # 用于根据位姿计算变换矩阵
 def pose_robot( x, y,z , Tx, Ty, Tz):  # 注意输入顺序！！！！！！
     thetaX = x / 180 * pi
@@ -54,7 +54,7 @@ def get_RT_from_chessboard(rot_vector, trans):
 
 robot_pose = []
 # 指定字符集为 utf-8-sig 是为了自动处理BOM字符，并消除\ufeff的出现
-with open(r'.\pose\pose.txt', 'r', encoding='utf-8-sig') as f:
+with open(r'./pose/pose.txt', 'r', encoding='utf-8-sig') as f:
     # 使用索引读取第3-5行
     lines = f.readlines()
     # 删除换行符，遍历读取
@@ -83,7 +83,8 @@ def eyeHandCalc(chessboard_size,square_size,eyeHandmethod):
     # 读取棋盘格图片并检测角点
     for i in range(0, len(robot_pose)):  # 假设有18张图片，文件名为1.jpg, 2.jpg, ..., 18.jpg
         # img_path = f'calcImg/Calibration_{i}.png '#Calibration_
-        img_path = f'calcImg/{i}.jpg'  # 仿真
+        # img_path = f'calcImg/{i}.jpg'  # 仿真
+        img_path = f'calcImg/Calibration_{i}.png'  # real
         img = cv2.imread(img_path)
         if img is None:
             print(f"图像文件 {img_path} 不存在或无法读取")
@@ -94,12 +95,12 @@ def eyeHandCalc(chessboard_size,square_size,eyeHandmethod):
         if ret:
             # 提升角点精度到亚像素级别
             criteria = (cv2.TermCriteria_EPS + cv2.TermCriteria_MAX_ITER, 40, 0.001)
-            corners = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
+            corners = cv2.cornerSubPix(gray, corners, (15, 15), (-1, -1), criteria)
             objpoints.append(objp)
             imgpoints.append(corners)
             # print(i)
-            # 画出棋盘格角点
-            cv2.drawChessboardCorners(img, chessboard_size, corners, ret)
+            # # 画出棋盘格角点
+            # cv2.drawChessboardCorners(img, chessboard_size, corners, ret)
             # cv2.imshow('Chessboard', img)
             # cv2.waitKey(300)
     cv2.destroyAllWindows()
@@ -120,6 +121,7 @@ def eyeHandCalc(chessboard_size,square_size,eyeHandmethod):
     for i in good_picture:
         end2robot_RT = pose_robot(robot_pose[i][3], robot_pose[i][4], robot_pose[i][5],
                                   robot_pose[i][0], robot_pose[i][1], robot_pose[i][2])
+        print(end2robot_RT)
         # 眼在手上
         if eyeHandmethod == '眼在手上':
             R_all_end_to_base_1.append(end2robot_RT[:3, :3])
@@ -132,10 +134,19 @@ def eyeHandCalc(chessboard_size,square_size,eyeHandmethod):
     # 手眼标定
     R, T = cv2.calibrateHandEye(R_all_end_to_base_1, T_all_end_to_base_1, R_all_chess_to_cam_1, T_all_chess_to_cam_1,
                                 method=cv2.CALIB_HAND_EYE_TSAI)
+
+
     RT = np.column_stack((R, T))
     RT = np.row_stack((RT, np.array([0, 0, 0, 1])))  # 即相机到机械臂末端法兰变换矩阵
     print('相机相对于末端的变换矩阵为：')
     print(RT)
+    print('相机相对于末端的变换矩阵为：')
+    # 将旋转矩阵转换为欧拉角
+
+    rx, ry, rz = rotationMatrixToEulerAngles(R)
+    RTtoAngle = np.array([T[0][0], T[1][0], T[2][0], rx, ry, rz])
+    print("RTtoAngle ", RTtoAngle)
+
     chess2base_T = []
     chess2base_theta = []
     # 固定的棋盘格相对于机器人基坐标系位姿不变，对结果验证，原则上来说，每次结果相差较小
@@ -156,10 +167,15 @@ def eyeHandCalc(chessboard_size,square_size,eyeHandmethod):
         # print(rotationMatrixToEulerAngles(chess2base_theta[i]) / np.pi * 180)
         print(f"{i}:", chess2base_T[i])
         chess2base_T_List.append(chess2base_T[i].tolist())
-    print('chess2base_T_List',chess2base_T_List)
+    # print('chess2base_T_List',chess2base_T_List)
+    chess2base_np = np.array([t[:3] for t in chess2base_T_List])
 
+    # print(np.array(chess2base_T[1:3]))
 
-    print(np.array(chess2base_T[1:3]))
+    # 标准差（衡量所有估计位置的波动，也就是精度）
+    std_position = np.std(chess2base_np, axis=0)
+
+    print("位置标准差（mm）：", std_position)
     #
     # # 提取 y, x, z 数据
     # y_data = [point[0] for point in chess2base_T]
@@ -178,5 +194,9 @@ def eyeHandCalc(chessboard_size,square_size,eyeHandmethod):
     # ax.set_ylabel('Y Label')
     # ax.set_zlabel('Z Label')
 
-    return '\n'.join([' '.join(f'{x:.6f}' for x in row) for row in RT]), '\n'.join(
-        [' '.join(f'{x:.6f}' for x in row) for row in chess2base_T_List])
+    return (
+        '\n'.join([' '.join(f'{x:.6f}' for x in row) for row in RT]),
+        '\n'.join([' '.join(f'{x:.6f}' for x in row) for row in chess2base_T_List]),
+        '\n'.join([' '.join(f'{x:.6f}' for x in row) for row in RTtoAngle.reshape(1, -1)]),
+        ' '.join(f'{x:.6f}' for x in std_position)
+    )

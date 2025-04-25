@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>2031</width>
+    <width>2058</width>
     <height>1223</height>
    </rect>
   </property>
@@ -227,7 +227,7 @@
          </font>
         </property>
         <property name="text">
-         <string>127.0.0.1</string>
+         <string>192.168.0.173</string>
         </property>
        </widget>
       </item>
@@ -747,25 +747,129 @@
        <x>13</x>
        <y>760</y>
        <width>495</width>
-       <height>210</height>
+       <height>105</height>
       </rect>
      </property>
      <property name="minimumSize">
       <size>
        <width>495</width>
-       <height>210</height>
+       <height>105</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
        <width>495</width>
-       <height>150</height>
+       <height>75</height>
       </size>
      </property>
      <property name="font">
       <font>
        <pointsize>12</pointsize>
       </font>
+     </property>
+     <property name="tabStopWidth">
+      <number>40</number>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="displayCalcResultAngle">
+     <property name="geometry">
+      <rect>
+       <x>13</x>
+       <y>931</y>
+       <width>495</width>
+       <height>40</height>
+      </rect>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>495</width>
+       <height>40</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>495</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="tabStopWidth">
+      <number>40</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_26">
+     <property name="geometry">
+      <rect>
+       <x>111</x>
+       <y>875</y>
+       <width>380</width>
+       <height>50</height>
+      </rect>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>380</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>320</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <family>黑体</family>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>手眼矩阵转欧拉角格式计算结果</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_27">
+     <property name="geometry">
+      <rect>
+       <x>32</x>
+       <y>870</y>
+       <width>60</width>
+       <height>60</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>1</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>60</width>
+       <height>60</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>60</width>
+       <height>60</height>
+      </size>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap>Img/matixImg.png</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+     <property name="wordWrap">
+      <bool>false</bool>
      </property>
     </widget>
    </widget>
@@ -1059,7 +1163,7 @@
            </font>
           </property>
           <property name="text">
-           <string>10</string>
+           <string>30</string>
           </property>
          </widget>
         </item>
@@ -1342,7 +1446,7 @@
         </font>
        </property>
        <property name="text">
-        <string>精度评估</string>
+        <string>精度评估(X Y Z)</string>
        </property>
       </widget>
      </item>
@@ -1381,8 +1485,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>2031</width>
-     <height>26</height>
+     <width>2058</width>
+     <height>18</height>
     </rect>
    </property>
   </widget>

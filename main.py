@@ -1,5 +1,6 @@
 import sys
-from scipy.spatial.transform import Rotation as R
+import time
+from pathlib import Path
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -15,9 +16,10 @@ np.set_printoptions(suppress=True)  # 禁用科学计数法
 class MyWindows(QMainWindow, Ui_MainWindow,Server,CameraXYZ):
     def __init__(self):
         super(MyWindows, self).__init__()
-        self.xyzwprList ,self.autoProgressBarValue,self.displayCalcResultList,self.displayCheckResultList=[],0,'',''
+        self.xyzwprList, self.autoProgressBarValue,self.displayCalcResultList,self.displayCheckResultList, self.displayCalcResultListtoAngle=[],0,'','',''
+        self.accuracyList = ''
         self.timerUpdata = QTimer(self)
-        self.timerUpdata.start(50)
+        self.timerUpdata.start(33)
         self.timerUpdata.timeout.connect(self.updateDataDF)
         self.setupUi(self)
         self.connectBtn.clicked.connect(self.openIPconnect)#打开tcp通讯
@@ -31,7 +33,8 @@ class MyWindows(QMainWindow, Ui_MainWindow,Server,CameraXYZ):
         self.closeCameraBtn.setEnabled(False)
         self.disconnectBtn.setEnabled(False)
     def readposeFileDF(self):
-        with open('pose/pose.txt','r', encoding='utf-8-sig') as f:
+        pose_file_path = Path('pose') / 'pose.txt'
+        with open(pose_file_path,'r', encoding='utf-8-sig') as f:
             lines = f.readlines()
             for line in lines:
                 self.cleaned_line = line.strip()  # 去除行尾换行符
@@ -64,18 +67,33 @@ class MyWindows(QMainWindow, Ui_MainWindow,Server,CameraXYZ):
         #手眼标定结果
         if self.displayCalcResult.toPlainText() != self.displayCalcResultList:
             self.displayCalcResult.setText(self.displayCalcResultList)
+        #手眼标定结果转角度
+        if self.displayCalcResultAngle.toPlainText() != self.displayCalcResultListtoAngle:
+            self.displayCalcResultAngle.setText(self.displayCalcResultListtoAngle)
         #手眼标定验算结果
         if self.displayCheckResult.toPlainText() != self.displayCheckResultList:
             self.displayCheckResult.setText(self.displayCheckResultList)
+        if self.accuracyEdit.toPlainText() != self.accuracyList:
+            self.accuracyEdit.setText(self.accuracyList)
     def update_frame(self):
-        #从相机类获取对齐的深度彩色帧
-        rgb_qimage,depth_qimage=self.get_camera_frame()
-        # 将图像转换为Qt可接受的格式
+        # 从相机类获取对齐的深度彩色帧
+        rgb_qimage, depth_qimage = self.get_camera_frame()
+
+        # 转换为 QImage
         depth_qimage = self.convert_cv2_to_qimage(depth_qimage)
         rgb_qimage = self.convert_cv2_to_qimage(rgb_qimage)
-        # 显示深度图像和RGB图像
-        self.depth_label.setPixmap(QPixmap.fromImage(depth_qimage))
-        self.rgb_label.setPixmap(QPixmap.fromImage(rgb_qimage))
+
+        # 获取 QLabel 大小
+        rgb_label_size = self.rgb_label.size()
+        depth_label_size = self.depth_label.size()
+
+        # 缩放图像以适应 QLabel（保持宽高比）
+        rgb_scaled = rgb_qimage.scaled(rgb_label_size)
+        depth_scaled = depth_qimage.scaled(depth_label_size)
+
+        # 显示图像
+        self.rgb_label.setPixmap(QPixmap.fromImage(rgb_scaled))
+        self.depth_label.setPixmap(QPixmap.fromImage(depth_scaled))
     def openCameraDF(self):
         self.closeCameraBtn.setEnabled(True)
         self.openCameraBtn.setEnabled(False)
@@ -83,7 +101,7 @@ class MyWindows(QMainWindow, Ui_MainWindow,Server,CameraXYZ):
         # 定时器更新帧
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_frame)
-        self.timer.start(30)
+        self.timer.start(33)
     def closeCameraDF(self):
         self.pipeline.stop()
         self.timer.stop()
@@ -105,6 +123,7 @@ class MyWindows(QMainWindow, Ui_MainWindow,Server,CameraXYZ):
     def movePathThread(self):
         while True:
             if self.dataRec:
+                print("debug ========", self.dataRec)
                 self.dataRec = ''
                 break
     #移动到达指定位置
@@ -114,22 +133,26 @@ class MyWindows(QMainWindow, Ui_MainWindow,Server,CameraXYZ):
         movethread.start()
     def autoRunDF(self):
         self.autoBtn.setEnabled(False)
+        self.dataRec = ''
         autoRunThread = threading.Thread(target=self.autoRunThreadDF)
         autoRunThread.start()
     def autoRunThreadDF(self):
+
         self.eyeHandcomBox.setEnabled(False)
         for i in range(0,len(self.xyzwprList)):
             self.autoProgressBarValue=int((i+1)/len(self.xyzwprList)*100)
             self.send_data(self.xyzwprCount(i))
             #等待到达
             self.movePathThread()
+            time.sleep(0.2)
             #拍照
             self.shotColorFrame(i)
+            print("Debug == ",i)
         print(self.eyeHandcomBox.currentText())
         if self.eyeHandcomBox.currentText() == '眼在手上':
-            self.displayCalcResultList,self.displayCheckResultList = eyeHandpy.eyeHandCalc((11, 8), 10, self.eyeHandcomBox.currentText())
+            self.displayCalcResultList,self.displayCheckResultList, self.displayCalcResultListtoAngle, self.accuracyList = eyeHandpy.eyeHandCalc((11, 8), 30, self.eyeHandcomBox.currentText())
         elif self.eyeHandcomBox.currentText() == '眼在手外':
-            self.displayCalcResultList,self.displayCheckResultList = eyeHandpy.eyeHandCalc((11, 8), 10, self.eyeHandcomBox.currentText())
+            self.displayCalcResultList,self.displayCheckResultList, self.displayCalcResultListtoAngle, self.accuracyList = eyeHandpy.eyeHandCalc((11, 8), 30, self.eyeHandcomBox.currentText())
         self.eyeHandcomBox.setEnabled(True)
 if  __name__ == '__main__':
     app = QApplication(sys.argv)
